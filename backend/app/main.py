@@ -7,10 +7,22 @@ from .database import Base, engine, get_db
 from .models import AllocationStatus, Employee, EmployeeStatus, Project, Seat, SeatAllocation, SeatStatus
 from .schemas import *
 from .services import active_allocation_for_employee, allocate_seat, assistant_answer, release_seat, suggest_seats
+from scripts.seed_data import run as seed_database
 
 Base.metadata.create_all(bind=engine)
+
+# Seed demo data only if the database is empty.
+seed_database()
+
+Base.metadata.create_all(bind=engine)
+
+# Seed demo data only if the database is empty.
+seed_database()
+
 app = FastAPI(
-    title="Ethara Seat Allocation & Project Mapping System", version="1.0.0")
+    title="Ethara Seat Allocation & Project Mapping System",
+    version="1.0.0",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

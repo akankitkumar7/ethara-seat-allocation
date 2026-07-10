@@ -6,37 +6,61 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 from .models import AllocationStatus, Employee, EmployeeStatus, Project, Seat, SeatAllocation, SeatStatus
 
+
 def active_allocation_for_employee(db: Session, employee_id: int):
     return db.scalar(select(SeatAllocation).where(SeatAllocation.employee_id == employee_id, SeatAllocation.allocation_status == AllocationStatus.ACTIVE))
+
 
 def allocate_seat(db: Session, employee_id: int, seat_id: int):
     employee = db.get(Employee, employee_id)
     seat = db.get(Seat, seat_id)
-    if not employee or employee.status != EmployeeStatus.ACTIVE: raise ValueError("Employee must exist and be active")
-    if not seat: raise ValueError("Seat not found")
-    if active_allocation_for_employee(db, employee_id): raise ValueError("Employee already has an active seat allocation")
-    if seat.status != SeatStatus.AVAILABLE: raise ValueError(f"Seat is {seat.status.value} and cannot be allocated")
-    allocation = SeatAllocation(employee_id=employee.id, seat_id=seat.id, project_id=employee.project_id)
+    if not employee or employee.status != EmployeeStatus.ACTIVE:
+        raise ValueError("Employee must exist and be active")
+    if not seat:
+        raise ValueError("Seat not found")
+    if active_allocation_for_employee(db, employee_id):
+        raise ValueError("Employee already has an active seat allocation")
+    if seat.status != SeatStatus.AVAILABLE:
+        raise ValueError(
+            f"Seat is {seat.status.value} and cannot be allocated")
+    allocation = SeatAllocation(
+        employee_id=employee.id, seat_id=seat.id, project_id=employee.project_id)
     seat.status = SeatStatus.OCCUPIED
     db.add(allocation)
-    try: db.commit()
+    try:
+        db.commit()
     except IntegrityError:
-        db.rollback(); raise ValueError("Seat or employee was allocated by another request; refresh and try again")
-    db.refresh(allocation); return allocation
+        db.rollback()
+        raise ValueError(
+            "Seat or employee was allocated by another request; refresh and try again")
+    db.refresh(allocation)
+    return allocation
+
 
 def release_seat(db: Session, employee_id: int | None, seat_id: int | None):
-    if not employee_id and not seat_id: raise ValueError("Provide employee_id or seat_id")
-    query = select(SeatAllocation).where(SeatAllocation.allocation_status == AllocationStatus.ACTIVE)
-    if employee_id: query = query.where(SeatAllocation.employee_id == employee_id)
-    if seat_id: query = query.where(SeatAllocation.seat_id == seat_id)
+    if not employee_id and not seat_id:
+        raise ValueError("Provide employee_id or seat_id")
+    query = select(SeatAllocation).where(
+        SeatAllocation.allocation_status == AllocationStatus.ACTIVE)
+    if employee_id:
+        query = query.where(SeatAllocation.employee_id == employee_id)
+    if seat_id:
+        query = query.where(SeatAllocation.seat_id == seat_id)
     allocation = db.scalar(query)
-    if not allocation: raise ValueError("No active allocation found")
-    allocation.allocation_status = AllocationStatus.RELEASED; allocation.released_date = datetime.utcnow(); allocation.seat.status = SeatStatus.AVAILABLE
-    db.commit(); return allocation
+    if not allocation:
+        raise ValueError("No active allocation found")
+    allocation.allocation_status = AllocationStatus.RELEASED
+    allocation.released_date = datetime.utcnow()
+    allocation.seat.status = SeatStatus.AVAILABLE
+    db.commit()
+    return allocation
+
 
 def suggest_seats(db: Session, employee: Employee, limit: int = 8):
-    teammate_zones = select(Seat.floor, Seat.zone, func.count(Seat.id).label("team_count")).join(SeatAllocation).where(SeatAllocation.project_id == employee.project_id, SeatAllocation.allocation_status == AllocationStatus.ACTIVE).group_by(Seat.floor, Seat.zone).subquery()
+    teammate_zones = select(Seat.floor, Seat.zone, func.count(Seat.id).label("team_count")).join(SeatAllocation).where(
+        SeatAllocation.project_id == employee.project_id, SeatAllocation.allocation_status == AllocationStatus.ACTIVE).group_by(Seat.floor, Seat.zone).subquery()
     return db.scalars(select(Seat).outerjoin(teammate_zones, (Seat.floor == teammate_zones.c.floor) & (Seat.zone == teammate_zones.c.zone)).where(Seat.status == SeatStatus.AVAILABLE).order_by(teammate_zones.c.team_count.desc().nullslast(), Seat.floor, Seat.zone, Seat.bay, Seat.seat_number).limit(limit)).all()
+
 
 def assistant_answer(db: Session, query: str) -> str:
     q = query.lower().strip()
@@ -44,23 +68,30 @@ def assistant_answer(db: Session, query: str) -> str:
         floor_match = re.search(r"\bfloor\s*(\d+)", q)
         floor = int(floor_match.group(1)) if floor_match else None
         stmt = select(Seat).where(Seat.status == SeatStatus.AVAILABLE)
-        if floor: stmt = stmt.where(Seat.floor == floor)
-        seats = db.scalars(stmt.order_by(Seat.floor, Seat.zone).limit(10)).all()
+        if floor:
+            stmt = stmt.where(Seat.floor == floor)
+        seats = db.scalars(stmt.order_by(
+            Seat.floor, Seat.zone).limit(10)).all()
         scope = f" on Floor {floor}" if floor else ""
         return f"There are {len(seats)} available seats shown{scope}: " + ", ".join(f"F{s.floor} {s.zone}, {s.bay}, {s.seat_number}" for s in seats) if seats else f"No available seats found{scope}."
-    project = db.scalar(select(Project).where(func.lower(Project.name).in_([word.strip('?.!,') for word in q.split()])))
+    project = db.scalar(select(Project).where(func.lower(
+        Project.name).in_([word.strip('?.!,') for word in q.split()])))
     if project and any(x in q for x in ["how many", "occupied", "utilization"]):
-        count = db.scalar(select(func.count()).select_from(SeatAllocation).where(SeatAllocation.project_id == project.id, SeatAllocation.allocation_status == AllocationStatus.ACTIVE))
+        count = db.scalar(select(func.count()).select_from(SeatAllocation).where(
+            SeatAllocation.project_id == project.id, SeatAllocation.allocation_status == AllocationStatus.ACTIVE))
         return f"Project {project.name} currently has {count} occupied seat(s)."
     matches: list[Employee] = []
     candidate = ""
     if any(x in q for x in ["where", "seated", "seat", "project", "assigned"]):
-        candidate = re.sub(r"^(?:where\s+is|find|locate|show)(?:\s+employee)?\s+", "", q)
-        candidate = re.sub(r"\s+(?:seated|sitting|sit|located|seat|project|assigned).*$", "", candidate).strip(" ?.!,")
+        candidate = re.sub(
+            r"^(?:where\s+is|find|locate|show)(?:\s+employee)?\s+", "", q)
+        candidate = re.sub(
+            r"\s+(?:seated|sitting|sit|located|seat|project|assigned).*$", "", candidate).strip(" ?.!,")
         if candidate:
             # A complete name is exact; a single word is treated as a first-name lookup.
             if " " in candidate:
-                matches = db.scalars(select(Employee).where(func.lower(Employee.name) == candidate)).all()
+                matches = db.scalars(select(Employee).where(
+                    func.lower(Employee.name) == candidate)).all()
             else:
                 # Include an exact one-word name ("Ankit") and full names that share
                 # that first name ("Ankit Kumar") in the same response.
