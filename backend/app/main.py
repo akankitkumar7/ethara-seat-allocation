@@ -11,8 +11,15 @@ from .services import active_allocation_for_employee, allocate_seat, assistant_a
 Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="Ethara Seat Allocation & Project Mapping System", version="1.0.0")
-app.add_middleware(CORSMiddleware, allow_origins=[
-                   "http://localhost:5173"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "https://ethara-seat-allocation-pearl.vercel.app",
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def fail(e): raise HTTPException(status_code=400, detail=str(e))
