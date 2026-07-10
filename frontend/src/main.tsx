@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import "./styles.css";
 import { NewJoinerReset } from "./NewJoinerReset";
-const API = "http://localhost:8000";
+const API = import.meta.env.VITE_API_URL;
 const get = (path: string) =>
   fetch(API + path).then(async (r) => {
     if (!r.ok) throw new Error((await r.json()).detail);
