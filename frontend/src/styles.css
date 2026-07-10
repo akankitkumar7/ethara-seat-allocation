@@ -1,0 +1,351 @@
+@import "tailwindcss";
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    background: #f7f8fc;
+    color: #1e293b;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif
+}
+
+main {
+    display: flex;
+    min-height: 100vh
+}
+
+aside {
+    width: 230px;
+    background: #171b38;
+    color: #c9ceea;
+    padding: 28px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    position: sticky;
+    top: 0;
+    height: 100vh
+}
+
+.brand {
+    font-weight: 800;
+    color: white;
+    font-size: 24px;
+    margin: 0 10px 30px
+}
+
+.brand span {
+    color: #37d0b4
+}
+
+aside button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    padding: 11px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer
+}
+
+aside button.active,
+aside button:hover {
+    background: #303763;
+    color: #fff
+}
+
+aside small {
+    margin: auto 10px 0;
+    color: #7d86ae
+}
+
+article {
+    padding: 38px;
+    flex: 1;
+    max-width: 1500px
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 29px;
+    color: #17213f
+}
+
+.title p {
+    color: #64748b;
+    margin: 7px 0 28px
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px
+}
+
+.card,
+.panel {
+    background: #fff;
+    border: 1px solid #e7eaf3;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #15234b08
+}
+
+.card {
+    padding: 18px
+}
+
+.card small {
+    color: #64748b
+}
+
+.card strong {
+    display: block;
+    font-size: 26px;
+    margin-top: 8px
+}
+
+.charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 20px
+}
+
+.panel {
+    padding: 20px;
+    margin-top: 18px
+}
+
+.panel h3 {
+    margin: 0 0 5px
+}
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+    margin: 14px 0
+}
+
+input,
+select {
+    border: 1px solid #d6dbea;
+    border-radius: 7px;
+    padding: 10px 11px;
+    font: inherit;
+    background: #fff;
+    min-width: 180px
+}
+
+button {
+    border: 0;
+    border-radius: 7px;
+    padding: 10px 14px;
+    background: #4f46e5;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer
+}
+
+button.secondary {
+    background: #eef0ff;
+    color: #4338ca;
+    padding: 8px 10px
+}
+
+.table-wrap {
+    overflow: auto;
+    background: white;
+    border: 1px solid #e7eaf3;
+    border-radius: 12px
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+th,
+td {
+    text-align: left;
+    padding: 14px;
+    border-bottom: 1px solid #edf0f5
+}
+
+th {
+    color: #64748b;
+    font-weight: 600
+}
+
+td small {
+    color: #64748b
+}
+
+.form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 760px
+}
+
+.form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600
+}
+
+.form button {
+    grid-column: 1/-1
+}
+
+.seat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 14px
+}
+
+.seat {
+    background: #eefcf8;
+    color: #0f766e;
+    border: 1px solid #b9efe2;
+    text-align: left
+}
+
+.seat small {
+    display: block;
+    opacity: .8;
+    margin-top: 4px
+}
+
+.seat.static {
+    padding: 11px;
+    font-weight: 600
+}
+
+.occupied {
+    background: #fff1f2;
+    color: #be123c;
+    border-color: #fecdd3
+}
+
+.reserved {
+    background: #fffbeb;
+    color: #a16207;
+    border-color: #fde68a
+}
+
+.maintenance {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #cbd5e1
+}
+
+.notice {
+    background: #edfdf7;
+    color: #047857;
+    padding: 12px;
+    border-radius: 8px
+}
+
+.chat {
+    max-width: 850px;
+    min-height: 400px
+}
+
+.chat .question {
+    margin: 18px 0 4px;
+    background: #eef0ff;
+    color: #3730a3;
+    padding: 10px;
+    border-radius: 8px
+}
+
+.chat .answer {
+    margin: 0;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px
+}
+
+.chat form {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px
+}
+
+.chat input {
+    flex: 1
+}
+
+@media(max-width:900px) {
+    aside {
+        width: 70px;
+        padding: 20px 8px
+    }
+
+    .brand {
+        font-size: 0;
+        margin: 0 5px 30px
+    }
+
+    .brand:before {
+        content: 'e';
+        font-size: 26px
+    }
+
+    aside button {
+        font-size: 0;
+        padding: 13px
+    }
+
+    aside button:before {
+        content: '•';
+        font-size: 20px
+    }
+
+    aside small {
+        display: none
+    }
+
+    article {
+        padding: 24px
+    }
+
+    .cards {
+        grid-template-columns: repeat(3, 1fr)
+    }
+
+    .seat-grid {
+        grid-template-columns: repeat(2, 1fr)
+    }
+}
+
+@media(max-width:600px) {
+    article {
+        padding: 18px
+    }
+
+    .cards,
+    .charts,
+    .form {
+        grid-template-columns: 1fr
+    }
+
+    .toolbar {
+        flex-wrap: wrap
+    }
+
+    .seat-grid {
+        grid-template-columns: 1fr
+    }
+
+    .title h1 {
+        font-size: 24px
+    }
+}
