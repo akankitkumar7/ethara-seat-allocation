@@ -333,7 +333,7 @@ The deployed frontend was blocked from accessing the backend due to browser CORS
 Updated the FastAPI CORS middleware to allow requests from both:
 
 - Local development (`http://localhost:5173`)
-- Production frontend (Vercel deployment URL)
+- Production frontend (https://ethara-seat-allocation-pearl.vercel.app/)
 
 ---
 
