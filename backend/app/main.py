@@ -28,6 +28,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "https://ethara-seat-allocation-pearl.vercel.app",
+        "https://ethara-backend-4jjh.onrender.com",
     ],
     allow_methods=["*"],
     allow_headers=["*"],
