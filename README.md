@@ -40,7 +40,8 @@ https://ethara-backend-4jjh.onrender.com/docs
 ---
 
 ## 💺 Seat Management
-
+- create seat
+- release a seat
 - View All Seats
 - Filter Seats
 - Available Seats
