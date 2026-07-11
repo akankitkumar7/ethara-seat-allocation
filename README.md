@@ -272,10 +272,10 @@ The following screenshots demonstrate the application's major features.
 - AI Assistant
 - Search & Filters
 
-> <img width="1918" height="937" alt="seats" src="https://github.com/user-attachments/assets/26a8702c-f081-4f9a-a9ff-bc57980d0405" />
-<img width="1918" height="933" alt="new-joinee" src="https://github.com/user-attachments/assets/95dd0860-b703-48f0-a3e2-d363940a72fb" />
-<img width="1918" height="941" alt="employees" src="https://github.com/user-attachments/assets/278ae149-7aea-414a-a528-9a38c5ad136b" />
 <img width="1917" height="938" alt="dashboard" src="https://github.com/user-attachments/assets/0c5b7d1f-12e4-44a3-90ba-3e79efe594cd" />
+<img width="1918" height="941" alt="employees" src="https://github.com/user-attachments/assets/278ae149-7aea-414a-a528-9a38c5ad136b" />
+<img width="1918" height="933" alt="new-joinee" src="https://github.com/user-attachments/assets/95dd0860-b703-48f0-a3e2-d363940a72fb" />
+> <img width="1918" height="937" alt="seats" src="https://github.com/user-attachments/assets/26a8702c-f081-4f9a-a9ff-bc57980d0405" />
 <img width="1918" height="938" alt="assistance" src="https://github.com/user-attachments/assets/ec0c387b-1cc1-416d-8f4f-000aa6de7406" />
 
 
