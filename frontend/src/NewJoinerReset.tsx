@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-const API = "http://localhost:8000";
+const API = import.meta.env.VITE_API_URL;
 const get = (path: string) =>
   fetch(API + path).then(async (response) => {
     if (!response.ok) throw new Error((await response.json()).detail);
