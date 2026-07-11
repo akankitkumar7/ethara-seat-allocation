@@ -243,7 +243,9 @@ The backend enforces the following rules:
 
 ---
 
-# 🌍 Deployment
+# 🚀 Deployment Notes
+
+The application is deployed as a split architecture:
 
 | Component | Platform |
 |-----------|----------|
@@ -251,13 +253,187 @@ The backend enforces the following rules:
 | Backend | Render |
 | Database | SQLite |
 
-Environment Variables:
+## Backend Deployment (Render)
 
-Frontend
+- Configured the backend as a Render Web Service.
+- Set the root directory to `backend`.
+- Added a `.python-version` file to ensure Python 3.12 compatibility.
+- Installed dependencies using `requirements.txt`.
+- Started the FastAPI application using Uvicorn.
 
+### Build Command
+
+```bash
+pip install -r requirements.txt
 ```
-VITE_API_URL=https://ethara-backend-4jjh.onrender.com
+
+### Start Command
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
+
+---
+
+## Frontend Deployment (Vercel)
+
+- Configured the frontend as a Vite application.
+- Set the root directory to `frontend`.
+- Added the backend URL as an environment variable.
+- Built and deployed automatically from the GitHub repository.
+
+### Environment Variable
+
+```text
+VITE_API_URL=https://ethara-backend-4jjh.onrender.com/
+```
+
+# 🐞 Debugging Notes
+
+During development and deployment, several technical challenges were encountered and resolved.
+
+## 1. Python Version Compatibility
+
+### Issue
+
+Render attempted to deploy the application using Python 3.14, causing dependency installation failures for `pydantic-core`.
+
+### Resolution
+
+Added a `.python-version` file specifying Python 3.12.10 to ensure compatibility with project dependencies.
+
+---
+
+## 2. Frontend Unable to Connect to Backend
+
+### Issue
+
+The frontend continued to make API requests to `http://localhost:8000` after deployment.
+
+### Resolution
+
+Replaced the hardcoded localhost URL with a Vite environment variable:
+
+```text
+VITE_API_URL = https://ethara-backend-4jjh.onrender.com/
+```
+
+This allows different API endpoints for local development and production deployments.
+
+---
+
+## 3. Cross-Origin Resource Sharing (CORS)
+
+### Issue
+
+The deployed frontend was blocked from accessing the backend due to browser CORS restrictions.
+
+### Resolution
+
+Updated the FastAPI CORS middleware to allow requests from both:
+
+- Local development (`http://localhost:5173`)
+- Production frontend (Vercel deployment URL)
+
+---
+
+## 4. Empty Database After Deployment
+
+### Issue
+
+Although the application worked locally, the deployed database contained no records.
+
+### Resolution
+
+Implemented an automatic seed mechanism that populates the database only when it is empty, ensuring demo data is available without overwriting existing records.
+
+---
+
+## 5. Render Service Configuration
+
+### Issue
+
+The backend initially failed to start because the service configuration was incorrect.
+
+### Resolution
+
+Configured:
+
+- Root Directory
+- Build Command
+- Start Command
+
+according to the FastAPI project structure.
+
+---
+
+## 6. Git Deployment
+
+### Issue
+
+New changes were not reflected in production.
+
+### Resolution
+
+Committed changes to GitHub and triggered automatic redeployment through Render and Vercel.
+
+---
+
+## 7. AI Assistant Search Accuracy
+
+### Issue
+
+The AI Assistant initially required the complete employee name and did not handle multiple employees with similar names correctly.
+
+### Resolution
+
+Enhanced the search logic to:
+
+- Support partial name matching.
+- Return a single employee when only one match exists.
+- Return all matching employees when multiple employees share the same first name.
+
+---
+
+## 8. User Experience Improvements
+
+Several UI improvements were implemented after testing:
+
+- Display a friendly message when no employee is found.
+- Clear the registration form after successful employee creation and seat allocation.
+- Replace the default project selection with a "Select Project" placeholder.
+- Improve validation and feedback messages throughout the application.
+
+---
+
+## Validation
+
+After each modification, the following validations were performed:
+
+- Verified REST APIs through FastAPI Swagger UI.
+- Tested frontend-backend integration.
+- Confirmed dashboard updates after seat allocation and release.
+- Verified search and filter functionality.
+- Tested AI Assistant responses.
+- Confirmed successful deployment on Render and Vercel.
+
+All major functionality was manually tested before submission.
+
+## Seed Data
+
+The application automatically populates the database during the first startup if no employee records exist.
+
+The generated dataset contains:
+
+- 5,000 Employees
+- 5,500 Seats
+- 11 Projects
+- 500 Available Seats
+- 100 Reserved Seats
+- 50 Maintenance Seats
+- 150 Employees Pending Seat Allocation
+
+This ensures the application is immediately usable for demonstration purposes.
 
 ---
 
