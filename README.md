@@ -419,24 +419,6 @@ After each modification, the following validations were performed:
 
 All major functionality was manually tested before submission.
 
-## Seed Data
-
-The application automatically populates the database during the first startup if no employee records exist.
-
-The generated dataset contains:
-
-- 5,000 Employees
-- 5,500 Seats
-- 11 Projects
-- 500 Available Seats
-- 100 Reserved Seats
-- 50 Maintenance Seats
-- 150 Employees Pending Seat Allocation
-
-This ensures the application is immediately usable for demonstration purposes.
-
----
-
 # 📸 Screenshots
 
 The following screenshots demonstrate the application's major features.
